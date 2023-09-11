@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
 <body>
+    <h1> Název: {{ kniha.nazev }} </h1>
+    <h2> Autor: {{ kniha.autor }} </h2>
+    <h2> Rok vydání: {{ kniha.rok_vydani }} </h2>
+    <h2> Jazyk: {{ kniha.jazyk }} </h2>
+    <h2> ISBN10: {{ kniha.ISBN10 }} </h2>
+    <h2> ISBN13: {{ kniha.ISBN13 }} </h2>
+    <h2> Žánr: {{ kniha.zanr.nazev_zanru }} </h2>
+    <h2> Majitel: {{ kniha.majitel}}</h2>
+
 
 </body>
-</html>
+{% endblock %}
