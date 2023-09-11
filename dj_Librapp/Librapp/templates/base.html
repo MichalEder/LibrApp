@@ -12,13 +12,12 @@
 <body>
     <nav>
         <div class="flex_box">
-            <div class="nav_item"><a href="{% url 'books list' %}">Seznam knih</a></div>
-            <div class="nav_item"><a href="{% url 'add book' %}">Moje knihy</a></div>
+            <div class="nav_item"><a href="{% url 'seznam' %}">Seznam knih</a></div>
+            <div class="nav_item"><a href="{% url 'pridat knihu' %}">Přidat knihu</a></div>
             {% if request.user.is_authenticated %}
-            <div class="nav_item"><a href="{% url 'logout' %}">Logout</a></div>
+
             {% else %}
-            <div class="nav_item"><a href="{% url 'register' %}">Registrace</a></div>
-            <div class="nav_item"><a href="{% url 'login' %}">Login</a></div>
+
             {% endif %}
 
         </div>
