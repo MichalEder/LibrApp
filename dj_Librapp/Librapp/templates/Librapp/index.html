@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <form method="GET">
+        <input type="text" name="q" placeholder="Hledej" value="{{ request.GET.q }}">
+        <button type="submit" name="title">Vyhledej</button>
+    </form>
+    <div class="content">
+        <ul>
+          <div class="title">
+              <li>Titul</li>
+              <li>Autor</li>
+              <li>Rok vydání</li>
+              <li>Akce</li>
+          </div>
 
-</body>
-</html>
+          {% for book in books %}
+          <a href="{% url 'detail' kniha.id %}" id="book-link">
+            <div class="data">
+                <li>{{ kniha.nazev }}</li>
+                <li>{{ kniha.autor }}</li>
+                <li>{{ kniha.rok_vydani }}</li>
+                <li>tlacitko</li>
+            </div>
+          </a>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+{% endblock %}
