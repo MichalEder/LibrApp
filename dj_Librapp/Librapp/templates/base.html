@@ -14,20 +14,18 @@
         <div class="flex_box">
             <div class="nav_item"><a href="{% url 'seznam' %}">Seznam knih</a></div>
             <div class="nav_item"><a href="{% url 'pridat knihu' %}">Přidat knihu</a></div>
-            {% if request.user.is_authenticated %}
+<!--            {% if request.user.is_authenticated %}-->
 
-            {% else %}
+<!--            {% else %}-->
 
-            {% endif %}
+<!--            {% endif %}-->
 
         </div>
     </nav>
-    <div class="content">
     {% block content %}
 
-    {% endblock %}
-    </div>
 
+    {% endblock %}
 </body>
 <div class="text-center">{{request.user.email}}</div>
 
