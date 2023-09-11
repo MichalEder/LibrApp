@@ -14,7 +14,7 @@
               <li>Akce</li>
           </div>
 
-          {% for book in books %}
+          {% for kniha in knihy %}
           <a href="{% url 'detail' kniha.id %}" id="kniha-link">
             <div class="data">
                 <li>{{ kniha.nazev }}</li>
@@ -25,7 +25,7 @@
           </a>
           {% endfor %}
         </ul>
-      </div>
+
     </div>
 
 {% endblock %}
