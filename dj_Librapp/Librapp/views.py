@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.views import generic
 from .models import Kniha
 from django.db.models import Q
+from .forms import KnihaForm
 
 # Create your views here.
-class DetailBook(generic.DetailView):
+class Detail(generic.DetailView):
 
     model = Kniha
     template_name = 'Librapp/detail.html'
@@ -28,3 +29,17 @@ class SeznamKnih(generic.ListView):
             ).order_by('-id')
         else:
             return Kniha.objects.all().order_by('-id')
+
+class PridatKnihu(generic.edit.CreateView):
+    form_class = KnihaForm
+    template_name = 'Librapp/pridat_knihu.html'
+
+    def get(self, request):
+        form = self.form_class(None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+        return render(request, self.template_name, {"form": form})

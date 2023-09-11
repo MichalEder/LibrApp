@@ -44,11 +44,14 @@ class Uzivatel(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
 class Zanr(models.Model):
+
     nazev_zanru = models.CharField(max_length=80)
 
     def __str__(self):
         return f"{self.genre_name}"
+
 class Kniha(models.Model):
     nazev = models.CharField(max_length=200, verbose_name="Název")
     autor = models.CharField(max_length=180, verbose_name="Autor")
@@ -57,7 +60,7 @@ class Kniha(models.Model):
     ISBN10 = models.CharField(max_length=180, blank=True)
     ISBN13 = models.CharField(max_length=180, blank=True)
     zanr = models.ForeignKey(Zanr, on_delete=models.SET_NULL, null= True, verbose_name="Žánr")
-    majitel = models.CharField(max_length=180, verbose_name="Majitel", blank=True)
+    #majitel = models.ForeignKey(Uzivatel,on_delete=models.SET_NULL, null=True, max_length=180, verbose_name="Majitel", blank=True)
 
     def __str__(self):
         return f"Název: {self.nazev} | Autor: {self.autor} | Žánr: {self.zanr}"

@@ -5,5 +5,5 @@ class KnihaForm(forms.ModelForm):
 
     class Meta:
         model = Kniha
-        fields = ['nazev', 'autor', 'rok_vydani', 'zanr', 'jazyk', 'ISBN10', 'ISBN13', 'majitel']
+        fields = ['nazev', 'autor', 'rok_vydani', 'zanr', 'jazyk', 'ISBN10', 'ISBN13'] #'majitel']
 
