@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type = "text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Můj web s filmy</title>
+</head>
+<body>
+    <nav>
+        <div class="flex_box">
+            <div class="nav_item"><a href="{% url 'books list' %}">Seznam knih</a></div>
+            <div class="nav_item"><a href="{% url 'add book' %}">Moje knihy</a></div>
+            {% if request.user.is_authenticated %}
+            <div class="nav_item"><a href="{% url 'logout' %}">Logout</a></div>
+            {% else %}
+            <div class="nav_item"><a href="{% url 'register' %}">Registrace</a></div>
+            <div class="nav_item"><a href="{% url 'login' %}">Login</a></div>
+            {% endif %}
+
+        </div>
+    </nav>
+    <div class="content">
+    {% block content %}
+
+    {% endblock %}
+    </div>
+
+</body>
+<div class="text-center">{{request.user.email}}</div>
+
+</html>
