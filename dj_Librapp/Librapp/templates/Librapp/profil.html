@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+
+  <h1>User Profile</h1>
+
+  <h2>User Details</h2>
+    <p>Uživatelské jméno: {{ user.uzivatelske_jmeno }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Jméno: {{ user.jmeno }}</p>
+    <p>Příijmení: {{ user.prijmeni }}</p>
+
+
+  <h2>Books Owned by User</h2>
+
+  <!-- Actual search box -->
+    <div class="main">
+        <div class="form-group has-search">
+            <form method="GET" class="search">
+            <input type="text" name="q" placeholder="Hledej" value="{{ request.GET.q }}">
+            <button type="submit" name="title">Vyhledej</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="content">
+        <ul>
+          <div class="title">
+              <li>Titul</li>
+              <li>Autor</li>
+              <li>Rok vydání</li>
+              <li>Akce</li>
+
+          </div>
+
+          {% for kniha in knihy %}
+          <a href="{% url 'detail' kniha.id %}" id="kniha-link">
+            <div class="data">
+                <li>{{ kniha.nazev }}</li>
+                <li>{{ kniha.autor }}</li>
+                <li>{{ kniha.rok_vydani }}</li>
+                <li>Tlacitko</li>
+
+
+
+            </div>
+            <div>
+
+            </div>
+          </a>
+          {% endfor %}
+        </ul>
+
+    </div>
+
+{% endblock %}
