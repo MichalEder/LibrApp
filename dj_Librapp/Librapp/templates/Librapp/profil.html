@@ -10,8 +10,8 @@
     <p>Jméno: {{ user.jmeno }}</p>
     <p>Příjmení: {{ user.prijmeni }}</p>
     {% if user == request.user or request.user.is_admin %}
-        <a href="{% url 'edit' user.id %}" class="btn btn-primary">Edit</a>
-        <a href="{% url 'delete' user.id %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'uprav_profil' user.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'odstran_uzivatele' user.id %}" class="btn btn-danger">Delete</a>
     {% endif %}
 
   <h2>Books Owned by User</h2>

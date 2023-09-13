@@ -22,6 +22,16 @@ class UpravKnihu(generic.UpdateView):
         return reverse_lazy('detail', kwargs={'pk': self.object.id})
 
 
+class UpravProfil(generic.UpdateView):
+
+    model = Uzivatel
+    form = RegistraceForm
+    template_name = 'Librapp/uprav_profil.html'
+    fields = ['email', 'jmeno', 'prijmeni', 'uzivatelske_jmeno']
+    def get_success_url(self):
+        return reverse_lazy('profil', kwargs={'pk': self.object.id})
+
+
 class OdstranKnihu(generic.DeleteView):
     model = Kniha
     template_name = 'Librapp/odstran_knihu.html'
@@ -35,6 +45,17 @@ class OdstranKnihu(generic.DeleteView):
     def get_success_url(self):
         user_id = self.request.user.id
         return reverse_lazy('profil', kwargs={'pk': user_id})
+
+
+class OdstranUzivatele(generic.DeleteView):
+    model = Uzivatel
+    template_name = 'Librapp/odstran_uzivatele.html'
+    success_url = reverse_lazy('index')  # Redirect to the book list page after successful deletion
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['confirmation_message'] = "Are you sure you want to delete this account?"
+        return context
 
 
 class Detail(generic.DetailView):
@@ -66,6 +87,7 @@ class PridatKnihu(generic.edit.CreateView):
     template_name = 'Librapp/pridat_knihu.html'
     form_search = VyhledavaniISBNForm
     form_book = KnihaForm
+    api_key = 'AIzaSyC93CTzl4KyuzwzGomQ2kipnPcj-0ZuubU'
 
     def get(self, request):
         form = self.form_search(None)
@@ -75,6 +97,7 @@ class PridatKnihu(generic.edit.CreateView):
     def post(self, request):
 
         search_form = self.form_search(request.POST)
+        book_form_empty = self.form_book(None)
 
         if request.POST['action'] == 'Vyhledej knihu':
 
@@ -97,22 +120,22 @@ class PridatKnihu(generic.edit.CreateView):
                     return render(request, f'Librapp/pridat_knihu.html', {'form': search_form, 'book_form': book_form})
                 else:
                     search_form.add_error('isbn', 'ISBN nenalezeno')
-                    return render(request, f'Librapp/pridat_knihu.html', {'form': search_form})
+                    return render(request, f'Librapp/pridat_knihu.html', {'form': search_form, 'book_form': book_form_empty})
 
         elif request.POST['action'] == 'Ulož knihu':
             book_form = self.form_book(request.POST)
-            book_form_empty = self.form_book(None)
+
             if book_form.is_valid():
                 book_form.save(commit=True)
                 return render(request, self.template_name, {'form': search_form, 'book_form': book_form_empty})
             else:
                 search_form.add_error('isbn', 'ISBN nenalezeno')
-                return render(request, self.template_name, {'form': search_form, 'book_form': book_form})
+                return render(request, self.template_name, {'form': search_form, 'book_form': book_form_empty})
         else:
             return HttpResponse("něco se posralo")
 
     def get_book_data(self, isbn):
-        google_books_api_url = f'https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}'
+        google_books_api_url = f'https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={self.api_key}'
         response = requests.get(google_books_api_url)
         if response.status_code == 200:
             data = response.json()
