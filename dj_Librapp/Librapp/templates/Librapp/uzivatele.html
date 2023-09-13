@@ -1,11 +1,7 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% extends "base_.html" %}
 {% block content %}
 
-
-
-  <!-- Actual search box -->
-    <div class="main">
+<div class="container m-3">
         <div class="form-group has-search">
             <form method="GET" class="search">
             <input type="text" name="q" placeholder="Hledej" value="{{ request.GET.q }}">
@@ -14,31 +10,36 @@
         </div>
     </div>
 
-
-    <div class="content">
-        <ul>
-          <div class="title">
-              <li>Jméno</li>
-              <li>Příjmení</li>
-              <li>Uživatelské jméno</li>
-              <li>Email</li>
-          </div>
-
-          {% for uzivatel in uzivatele %}
-          <a href="{% url 'profil' uzivatel.id %}">
-            <div class="data">
-                <li>{{ uzivatel.jmeno }}</li>
-                <li>{{ uzivatel.prijmeni }}</li>
-                <li>{{ uzivatel.uzivatelske_jmeno }}</li>
-                <li>{{ uzivatel.email }}</li>
-                {% if request.user.is_admin %}
-                <li>tlacitko</li>
-                {% endif %}
-            </div>
-          </a>
-          {% endfor %}
-        </ul>
-
-    </div>
+<div class="container m-3">
+    <table class="table table-striped table-hover table-sm">
+      <thead>
+        <tr>
+          <th scope="col">Jméno</th>
+          <th scope="col">Příjmení</th>
+          <th scope="col">Uživatelské jméno</th>
+          <th scope="col">Email</th>
+            {% if request.user.is_admin %}
+          <th scope="col">Akce</th>
+            {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+      {% for uzivatel in uzivatele %}
+        <tr>
+          <td><a href="{% url 'profil' uzivatel.id %}" class="text-decoration-none text-secondary">{{ uzivatel.jmeno }}</a></td>
+          <td><a href="{% url 'profil' uzivatel.id %}" class="text-decoration-none text-secondary">{{ uzivatel.prijmeni }}</a></td>
+          <td><a href="{% url 'profil' uzivatel.id %}" class="text-decoration-none text-secondary">{{ uzivatel.uzivatelske_jmeno }}</a></td>
+          <td><a href="{% url 'profil' uzivatel.id %}" class="text-decoration-none text-secondary">{{ uzivatel.email }}</a></td>
+            {% if request.user.is_admin %}
+          <td>
+              <a href="{% url 'profil' uzivatel.id %}" class="btn btn-primary">Edit</a>
+              <a href="{% url 'profil' uzivatel.id %}" class="btn btn-danger">Delete</a>
+          </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
 
 {% endblock %}

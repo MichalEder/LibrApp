@@ -39,7 +39,7 @@ class OdstranKnihu(generic.DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['confirmation_message'] = "Are you sure you want to delete this book?"
+        context['confirmation_message'] = f"Opravdu si přejete smazat knihu {self.object.nazev}? "
         return context
 
     def get_success_url(self):
@@ -54,7 +54,7 @@ class OdstranUzivatele(generic.DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['confirmation_message'] = "Are you sure you want to delete this account?"
+        context['confirmation_message'] = f"Opravdu si přejete smazat účet uživatele {self.object.jmeno} {self.object.prijmeni}?"
         return context
 
 
@@ -107,7 +107,8 @@ class PridatKnihu(generic.edit.CreateView):
 
                 if book_data:
                     initial_data = {
-                        'nazev': book_data.get('title', '') + " : " + book_data.get('subtitle', ''),
+                        'nazev': book_data.get('title', ''),
+                        'podtitul': book_data.get('subtitle', ''),
                         'autor': ', '.join(book_data.get('authors', [])),
                         'rok_vydani': book_data.get('publishedDate', ''),
                         'jazyk': book_data.get('language', ''),

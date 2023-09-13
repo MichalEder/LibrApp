@@ -6,7 +6,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 # Register your models here.
 
 class UzivatelCreationForm(forms.ModelForm):
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password = forms.CharField(label="Heslo", widget=forms.PasswordInput)
 
     class Meta:
         model = Uzivatel
