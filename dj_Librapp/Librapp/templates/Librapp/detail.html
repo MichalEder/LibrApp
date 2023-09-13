@@ -10,7 +10,7 @@
     <h2> ISBN13: {{ kniha.ISBN13 }} </h2>
     <h2> Žánr: {{ kniha.zanr.nazev_zanru }} </h2>
     <h2> Majitel: {{ kniha.majitel}}</h2>
-    {% if kniha.majitel == request.user %}
+    {% if kniha.majitel == request.user or request.user.is_admin %}
     <a href="{% url 'edit' kniha.id %}" class="btn btn-primary">Edit</a>
     <a href="{% url 'delete' kniha.id %}" class="btn btn-danger">Delete</a>
     {% endif %}
