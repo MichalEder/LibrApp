@@ -73,7 +73,8 @@ class SeznamKnih(generic.ListView):
         if query:
             return Kniha.objects.filter(
                 Q(nazev__icontains=query) |
-                Q(autor__icontains=query)
+                Q(autor__icontains=query) |
+                Q(podtitul__icontains=query)
             ).order_by('-id')
         else:
             return Kniha.objects.all().order_by('-id')
@@ -225,6 +226,7 @@ class Profil(LoginRequiredMixin, generic.TemplateView):
 
             context['knihy'] = Kniha.objects.filter(
                 Q(nazev__icontains=query) |
+                Q(podtitul__icontains=query) |
                 Q(autor__icontains=query),
                 majitel=user
             ).order_by('-id')
