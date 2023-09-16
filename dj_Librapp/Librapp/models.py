@@ -65,3 +65,6 @@ class Kniha(models.Model):
 
     def __str__(self):
         return f"Název: {self.nazev} | Podtitul: {self.podtitul} | Autor: {self.autor} | Žánr: {self.zanr}"
+
+
+#TODO: vypujcky, zapujcky, komentare, hodnoceni

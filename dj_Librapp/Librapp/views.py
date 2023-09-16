@@ -11,47 +11,107 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
+
 class UpraveniKnihy(generic.UpdateView):
+    """
+    View pro úpravu knihy.
+
+    Attributes:
+        model (Type[Kniha]): Model knihy, který bude použit pro tuto view.
+        form (Type[KnihaForm]): Formulář pro úpravu knihy.
+        template_name (str): Název šablony pro zobrazení úpravy knihy.
+        fields (list[str]): Pole polí, která budou zobrazena ve formuláři pro úpravu knihy.
+    """
+
     model = Kniha
     form = KnihaForm
     template_name = 'Librapp/uprav_knihu.html'
     fields = ['nazev', 'autor', 'rok_vydani', 'zanr', 'jazyk', 'ISBN10', 'ISBN13', 'majitel']
 
     def get_success_url(self):
+        """
+        Získá URL pro přesměrování po úspěšné aktualizaci knihy.
+
+        Returns:
+            str: URL pro přesměrování na detail knihy po aktualizaci.
+        """
         return reverse_lazy('detail', kwargs={'pk': self.object.id})
 
 
+
 class UpraveniUzivatele(generic.UpdateView):
+    """
+    View pro úpravu uživatele.
+
+    Attributes:
+        model (Type[Uzivatel]): Model uživatele, který bude použit pro tuto view.
+        form (Type[RegistraceForm]): Formulář pro úpravu uživatelského profilu.
+        template_name (str): Název šablony pro zobrazení úpravy profilu.
+        fields (list[str]): Pole polí, která budou zobrazena ve formuláři pro úpravu.
+    """
     model = Uzivatel
     form = RegistraceForm
     template_name = 'Librapp/uprav_profil.html'
     fields = ['email', 'jmeno', 'prijmeni', 'uzivatelske_jmeno']
 
     def get_success_url(self):
+        """Získá URL pro přesměrování po úspěšné aktualizaci uživatelského profilu."""
         return reverse_lazy('profil', kwargs={'pk': self.object.id})
 
 
 class OdstraneniKnihy(generic.DeleteView):
+    """
+    View pro odstranění knihy.
+
+    Attributes:
+        model (Type[Kniha]): Model knihy, který bude použit pro tuto view.
+        template_name (str): Název šablony pro zobrazení odstranění knihy.
+    """
     model = Kniha
     template_name = 'Librapp/odstran_knihu.html'
-    success_url = reverse_lazy('index')
 
     def get_context_data(self, **kwargs):
+        """
+        Získá a rozšíří kontext pro zobrazení šablony.
+
+        Args:
+            **kwargs: Klíčové argumenty předávané nadtřídě.
+        """
         context = super().get_context_data(**kwargs)
         context['confirmation_message'] = f"Opravdu si přejete smazat knihu {self.object.nazev}? "
         return context
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
+        """
+        Získá URL pro přesměrování po úspěšném smazání knihy.
+
+        Returns:
+            str: URL pro přesměrování na uživatelský profil po smazání knihy.
+        """
         user_id = self.request.user.id
         return reverse_lazy('profil', kwargs={'pk': user_id})
 
 
 class OdstraneniUzivatele(generic.DeleteView):
+    """
+    View pro odstranění uživatele.
+
+    Attributes:
+        model (Type[Uzivatel]): Model uživatele, který bude použit pro tuto view.
+        template_name (str): Název šablony pro zobrazení odstranění uživatele.
+        success_url (str): URL pro přesměrování po úspěšném smazání uživatele.
+    """
     model = Uzivatel
     template_name = 'Librapp/odstran_uzivatele.html'
     success_url = reverse_lazy('index')
 
     def get_context_data(self, **kwargs):
+        """
+        Získá a rozšíří kontext pro zobrazení šablony.
+
+        Args:
+            **kwargs: Klíčové argumenty předávané nadtřídě.
+        """
         context = super().get_context_data(**kwargs)
         context[
             'confirmation_message'] = f"Opravdu si přejete smazat účet uživatele {self.object.jmeno} {self.object.prijmeni}?"
@@ -59,16 +119,35 @@ class OdstraneniUzivatele(generic.DeleteView):
 
 
 class DetailKnihy(generic.DetailView):
+    """
+    View pro zobrazení detailu knihy.
+
+    Attributes:
+        model (Type[Kniha]): Model knihy, který bude použit pro tuto view.
+        template_name (str): Název šablony pro zobrazení detailu knihy.
+    """
     model = Kniha
     template_name = 'Librapp/detail.html'
 
 
 class SeznamKnih(generic.ListView):
+    """
+    View pro zobrazení seznamu knih.
+
+    Attributes:
+        template_name (str): Název šablony pro zobrazení seznamu knih.
+        context_object_name (str): Název objektu v kontextu, který obsahuje seznam knih.
+    """
     template_name = "Librapp/index.html"
     context_object_name = "knihy"
 
     def get_queryset(self):
+        """
+        Získá seznam knih k zobrazení na základě vyhledávacího dotazu.
 
+        Returns:
+            QuerySet[Kniha]: Queryset obsahující seznam knih pro zobrazení.
+        """
         query = self.request.GET.get('q')
         if query:
             return Kniha.objects.filter(
@@ -80,28 +159,82 @@ class SeznamKnih(generic.ListView):
             return Kniha.objects.all().order_by('-id')
 
 
+class VyhledavaniISBN:
+    """
+    Třída pro vyhledávání knihy podle ISBN pomocí Google Books API.
+
+    Attributes:
+        api_key (str): Klíč pro přístup k Google Books API (TODO: skryt apikey).
+        isbn (str): ISBN knihy, podle které je vyhledáváno.
+    """
+    def __init__(self, isbn: str):
+        self.api_key = 'AIzaSyC93CTzl4KyuzwzGomQ2kipnPcj-0ZuubU' #TODO: skryt apikey
+        self.isbn = isbn
+
+    def get_book_data(self):
+        """
+        Získejte data o knize z Google Books API na základě ISBN.
+
+        Returns:
+            dict or None: Data o knize z Google Books API nebo None, pokud kniha nebyla nalezena.
+        """
+        google_books_api_url = f'https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}&key={self.api_key}'
+        response = requests.get(google_books_api_url)
+        if response.status_code == 200:
+            data = response.json()
+            if 'items' in data and len(data['items']) > 0:
+                book_info = data['items'][0]['volumeInfo']
+                return book_info
+        return None
+
+
 class PridaniKnihy(generic.edit.CreateView):
+    """
+    View pro přidání knihy.
+
+    Attributes:
+        form_class (Type[KnihaForm]): Třída formuláře pro přidání knihy.
+        template_name (str): Název šablony pro zobrazení formuláře.
+        form_search (Type[VyhledavaniISBNForm]): Třída formuláře pro vyhledávání knihy podle ISBN.
+        form_book (Type[KnihaForm]): Třída formuláře pro přidání knihy.
+    """
     form_class = KnihaForm
     template_name = 'Librapp/pridat_knihu.html'
     form_search = VyhledavaniISBNForm
     form_book = KnihaForm
-    api_key = 'AIzaSyC93CTzl4KyuzwzGomQ2kipnPcj-0ZuubU'
 
     def get(self, request):
+        """
+        Získá GET požadavek pro zobrazení formuláře pro přidání knihy.
+
+        Args:
+            request (HttpRequest): HTTP GET požadavek.
+
+        Returns:
+            HttpResponse: Odpověď s vykresleným formulářem.
+        """
         form = self.form_search(None)
         book_form = self.form_book(None)
         return render(request, self.template_name, {'form': form, 'book_form': book_form})
 
     def post(self, request):
+        """
+        Získá POST požadavek a zpracuje přidání knihy nebo vyhledání knihy podle ISBN.
 
+        Args:
+            request (HttpRequest): HTTP POST požadavek.
+
+        Returns:
+            HttpResponse: Odpověď po zpracování požadavku.
+        """
         search_form = self.form_search(request.POST)
         book_form_empty: KnihaForm = self.form_book(None)
 
         if request.POST['action'] == 'Vyhledej knihu':
 
             if search_form.is_valid():
-                isbn = search_form.cleaned_data['isbn']
-                book_data = self.get_book_data(isbn)
+                vyhledavani = VyhledavaniISBN(search_form.cleaned_data['isbn'])
+                book_data = vyhledavani.get_book_data()
 
                 if book_data:
                     initial_data = {
@@ -130,31 +263,46 @@ class PridaniKnihy(generic.edit.CreateView):
                 book_form.save(commit=True)
                 return render(request, self.template_name, {'form': search_form, 'book_form': book_form_empty})
             else:
-                search_form.add_error('isbn', 'ISBN nenalezeno')
+                search_form.add_error('isbn', 'Kniha neuložena')
                 return render(request, self.template_name, {'form': search_form, 'book_form': book_form_empty})
         else:
-            return HttpResponse("něco se posralo")
-
-    def get_book_data(self, isbn):
-        google_books_api_url = f'https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={self.api_key}'
-        response = requests.get(google_books_api_url)
-        if response.status_code == 200:
-            data = response.json()
-            if 'items' in data and len(data['items']) > 0:
-                book_info = data['items'][0]['volumeInfo']
-                return book_info
-        return None
+            return HttpResponse("Něco se po...kazilo")
 
 
 class UzivatelLogin(generic.edit.CreateView):
+    """
+    View pro přihlášení uživatele.
+
+    Attributes:
+        form_class (Type[LoginForm]): Třída formuláře pro přihlášení.
+        template_name (str): Název šablony pro zobrazení přihlašovacího formuláře.
+    """
     form_class = LoginForm
     template_name = "LibrApp/login.html"
 
     def get(self, request):
+        """
+        Získá GET požadavek pro zobrazení přihlašovacího formuláře.
+
+        Args:
+            request (HttpRequest): HTTP GET požadavek.
+
+        Returns:
+            HttpResponse: Odpověď s vykresleným přihlašovacím formulářem.
+        """
         form = self.form_class(None)
         return render(request, self.template_name, {"form": form})
 
     def post(self, request):
+        """
+        Získá POST požadavek a zpracuje přihlášení uživatele.
+
+        Args:
+            request (HttpRequest): HTTP POST požadavek.
+
+        Returns:
+            HttpResponse: Odpověď po zpracování přihlašovacího požadavku.
+        """
         form = self.form_class(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
@@ -166,16 +314,42 @@ class UzivatelLogin(generic.edit.CreateView):
         return render(request, self.template_name, {'form': form})
 
 
-class UzivatelRegisterace(generic.edit.CreateView):
+class UzivatelRegistrace(generic.edit.CreateView):
+    """
+    View pro registraci uživatele.
+
+    Attributes:
+        form_class (Type[RegistraceForm]): Třída formuláře pro registraci uživatele.
+        model (Type[Uzivatel]): Model uživatele, který bude použit pro tuto view.
+        template_name (str): Název šablony pro zobrazení registračního formuláře.
+    """
     form_class = RegistraceForm
     model = Uzivatel
     template_name = 'Librapp/registrace.html'
 
     def get(self, request):
+        """
+        Získá GET požadavek pro zobrazení registračního formuláře.
+
+        Args:
+            request (HttpRequest): HTTP GET požadavek.
+
+        Returns:
+            HttpResponse: Odpověď s vykresleným registračním formulářem.
+        """
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
+        """
+        Získá POST požadavek a zpracuje registraci uživatele.
+
+        Args:
+            request (HttpRequest): HTTP POST požadavek.
+
+        Returns:
+            HttpResponse: Odpověď po zpracování registračního požadavku.
+        """
         form = self.form_class(request.POST)
         if form.is_valid():
             uzivatel = form.save(commit=False)
@@ -189,14 +363,38 @@ class UzivatelRegisterace(generic.edit.CreateView):
 
 
 def logout_uzivatel(request):
+    """
+    View pro odhlášení uživatele.
+
+    Args:
+        request (HttpRequest): HTTP požadavek.
+
+    Returns:
+        HttpResponseRedirect: Přesměrování uživatele na stránku 'index' po odhlášení.
+    """
     logout(request)
     return redirect('index')
 
 
 class DetailUzivatele(LoginRequiredMixin, generic.TemplateView):
+    """
+    View pro zobrazení detailu uživatele.
+
+    Attributes:
+        template_name (str): Název šablony pro zobrazení detailu uživatele.
+    """
     template_name = 'Librapp/profil.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Získá a rozšíří kontext pro zobrazení šablony.
+
+        Args:
+            **kwargs: Klíčové argumenty předávané nadtřídě.
+
+        Returns:
+            dict: Rozšířený kontext obsahující informace o uživateli a jeho knihách.
+        """
         context = super().get_context_data(**kwargs)
         user_id = self.kwargs.get('pk')
         query = self.request.GET.get('q')
@@ -204,13 +402,13 @@ class DetailUzivatele(LoginRequiredMixin, generic.TemplateView):
         context['user'] = user
 
         if query:
-
             context['knihy'] = Kniha.objects.filter(
                 Q(nazev__icontains=query) |
                 Q(podtitul__icontains=query) |
                 Q(autor__icontains=query),
                 majitel=user
             ).order_by('-id')
+
         else:
             context['knihy'] = Kniha.objects.filter(majitel=user).order_by('-id')
 
@@ -218,11 +416,23 @@ class DetailUzivatele(LoginRequiredMixin, generic.TemplateView):
 
 
 class SeznamUzivatelu(generic.ListView):
+    """
+    View pro zobrazení seznamu uživatelů.
+
+    Attributes:
+        template_name (str): Název šablony pro zobrazení seznamu uživatelů.
+        context_object_name (str): Název proměnné v kontextu, do které bude uložen seznam uživatelů.
+    """
     template_name = "Librapp/uzivatele.html"
     context_object_name = "uzivatele"
 
     def get_queryset(self):
+        """
+         Získá seznam uživatelů k zobrazení na základě vyhledávacího dotazu.
 
+         Returns:
+             QuerySet[Uzivatel]: Queryset obsahující seznam uživatelů pro zobrazení.
+         """
         query = self.request.GET.get('q')
         if query:
             return Uzivatel.objects.filter(

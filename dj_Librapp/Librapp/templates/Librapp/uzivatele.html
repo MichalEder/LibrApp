@@ -5,7 +5,7 @@
         <div class="form-group has-search">
             <form method="GET" class="search">
             <input type="text" name="q" placeholder="Hledej" value="{{ request.GET.q }}">
-            <button type="submit" name="title">Vyhledej</button>
+            <button type="submit" class="btn btn-primary" name="title">Vyhledej</button>
             </form>
         </div>
     </div>
@@ -32,8 +32,8 @@
           <td><a href="{% url 'profil' uzivatel.id %}" class="text-decoration-none text-secondary">{{ uzivatel.email }}</a></td>
             {% if request.user.is_admin %}
           <td>
-              <a href="{% url 'profil' uzivatel.id %}" class="btn btn-primary">Edit</a>
-              <a href="{% url 'profil' uzivatel.id %}" class="btn btn-danger">Delete</a>
+              <a href="{% url 'uprav_profil' uzivatel.id %}" class="btn btn-primary">Uprav</a>
+              <a href="{% url 'odstran_uzivatele' uzivatel.id %}" class="btn btn-danger">Smaž</a>
           </td>
             {% endif %}
         </tr>
