@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 
-class UpravKnihu(generic.UpdateView):
+class UpraveniKnihy(generic.UpdateView):
     model = Kniha
     form = KnihaForm
     template_name = 'Librapp/uprav_knihu.html'
@@ -21,7 +21,7 @@ class UpravKnihu(generic.UpdateView):
         return reverse_lazy('detail', kwargs={'pk': self.object.id})
 
 
-class UpravProfil(generic.UpdateView):
+class UpraveniUzivatele(generic.UpdateView):
     model = Uzivatel
     form = RegistraceForm
     template_name = 'Librapp/uprav_profil.html'
@@ -31,7 +31,7 @@ class UpravProfil(generic.UpdateView):
         return reverse_lazy('profil', kwargs={'pk': self.object.id})
 
 
-class OdstranKnihu(generic.DeleteView):
+class OdstraneniKnihy(generic.DeleteView):
     model = Kniha
     template_name = 'Librapp/odstran_knihu.html'
     success_url = reverse_lazy('index')
@@ -46,7 +46,7 @@ class OdstranKnihu(generic.DeleteView):
         return reverse_lazy('profil', kwargs={'pk': user_id})
 
 
-class OdstranUzivatele(generic.DeleteView):
+class OdstraneniUzivatele(generic.DeleteView):
     model = Uzivatel
     template_name = 'Librapp/odstran_uzivatele.html'
     success_url = reverse_lazy('index')
@@ -58,7 +58,7 @@ class OdstranUzivatele(generic.DeleteView):
         return context
 
 
-class Detail(generic.DetailView):
+class DetailKnihy(generic.DetailView):
     model = Kniha
     template_name = 'Librapp/detail.html'
 
@@ -80,7 +80,7 @@ class SeznamKnih(generic.ListView):
             return Kniha.objects.all().order_by('-id')
 
 
-class PridatKnihu(generic.edit.CreateView):
+class PridaniKnihy(generic.edit.CreateView):
     form_class = KnihaForm
     template_name = 'Librapp/pridat_knihu.html'
     form_search = VyhledavaniISBNForm
@@ -146,7 +146,7 @@ class PridatKnihu(generic.edit.CreateView):
         return None
 
 
-class UzivatelViewLogin(generic.edit.CreateView):
+class UzivatelLogin(generic.edit.CreateView):
     form_class = LoginForm
     template_name = "LibrApp/login.html"
 
@@ -166,7 +166,7 @@ class UzivatelViewLogin(generic.edit.CreateView):
         return render(request, self.template_name, {'form': form})
 
 
-class UzivatelViewRegister(generic.edit.CreateView):
+class UzivatelRegisterace(generic.edit.CreateView):
     form_class = RegistraceForm
     model = Uzivatel
     template_name = 'Librapp/registrace.html'
@@ -193,26 +193,7 @@ def logout_uzivatel(request):
     return redirect('index')
 
 
-class KnihyUzivatele(LoginRequiredMixin, generic.ListView):
-    template_name = "Librapp/uzivatel_knihy.html"
-    context_object_name = "knihy"
-
-    def get_queryset(self):
-        # Get the logged-in user
-        user = self.request.user
-
-        query = self.request.GET.get('q')
-        if query:
-            return Kniha.objects.filter(
-                Q(nazev__icontains=query) |
-                Q(autor__icontains=query),
-                majitel=user
-            ).order_by('-id')
-        else:
-            return Kniha.objects.filter(majitel=user).order_by('-id')
-
-
-class Profil(LoginRequiredMixin, generic.TemplateView):
+class DetailUzivatele(LoginRequiredMixin, generic.TemplateView):
     template_name = 'Librapp/profil.html'
 
     def get_context_data(self, **kwargs):
