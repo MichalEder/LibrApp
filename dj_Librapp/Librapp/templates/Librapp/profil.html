@@ -1,20 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container m-3" >
+  <h1>Profil uživatele {{ user }}</h1>
+</div>
+<div class="container m-3">
+      {% if user == request.user or request.user.is_admin %}
 
-  <h1>User Profile</h1>
+        <a href="{% url 'uprav_profil' user.id %}" class="btn btn-primary">Uprav</a>
 
-  <h2>User Details</h2>
-    <p>Uživatelské jméno: {{ user.uzivatelske_jmeno }}</p>
+        <a href="{% url 'odstran_uzivatele' user.id %}" class="btn btn-danger">Smaž účet</a>
+      {% endif %}
+</div>
+<div class="container m-3 mb-5">
+    <p class>Uživatelské jméno: {{ user.uzivatelske_jmeno }}</p>
     <p>Email: {{ user.email }}</p>
     <p>Jméno: {{ user.jmeno }}</p>
     <p>Příjmení: {{ user.prijmeni }}</p>
-    {% if user == request.user or request.user.is_admin %}
-        <a href="{% url 'uprav_profil' user.id %}" class="btn btn-primary">Edit</a>
-        <a href="{% url 'odstran_uzivatele' user.id %}" class="btn btn-danger">Delete</a>
-    {% endif %}
-
-  <h2>Books Owned by User</h2>
+</div>
+<div class="container m-3">
+  <h2>Vlastněné knihy</h2>
 
   <!-- Actual search box -->
     <div class="main">
@@ -25,36 +30,44 @@
             </form>
         </div>
     </div>
+</div>
 
 
-    <div class="content">
-        <ul>
-          <div class="title">
-              <li>Titul</li>
-              <li>Autor</li>
-              <li>Rok vydání</li>
-              <li>Akce</li>
+  <div class="container m-3 h-75" style="height: 100px">
+    <div class="table-responsive">
 
-          </div>
+      <table id="dtDynamicVerticalScrollExample" class="table table-striped table-hover table-sm">
+        <thead>
+          <tr>
+            <th scope="col">Název</th>
+            <th scope="col">Podtitul</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Rok vydání</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+      {% for kniha in knihy %}
+        <tr>
+          <td><a href="{% url 'detail' kniha.id %}" class="text-decoration-none text-secondary">{{ kniha.nazev }}</a></td>
+          <td><a href="{% url 'detail' kniha.id %}" class="text-decoration-none text-secondary">{{ kniha.podtitul }}</a></td>
+          <td>{{ kniha.autor }}</td>
+          <td>{{ kniha.rok_vydani }}</td>
+            {% if user == request.user or request.user.is_admin %}
 
-          {% for kniha in knihy %}
-          <a href="{% url 'detail' kniha.id %}" id="kniha-link">
-            <div class="data">
-                <li>{{ kniha.nazev }}</li>
-                <li>{{ kniha.autor }}</li>
-                <li>{{ kniha.rok_vydani }}</li>
-                <li>Tlacitko</li>
-
-
-
-            </div>
-            <div>
-
-            </div>
-          </a>
-          {% endfor %}
-        </ul>
-
+          <td>
+                <a href="{% url 'edit' kniha.id %}" class="btn btn-primary">Edit</a>
+                <a href="{% url 'delete' kniha.id %}" class="btn btn-danger">Delete</a>
+          </td>
+            {% endif %}
+        </tr>
+      {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
+
+
+
 
 {% endblock %}

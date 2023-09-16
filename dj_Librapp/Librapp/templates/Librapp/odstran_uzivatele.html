@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>Delete Account</h2>
+<div class="m-5">
+  <h2>Smazat účet</h2>
   <p>{{ confirmation_message }}</p>
   <form method="post">
     {% csrf_token %}
-    <button type="submit">Confirm Delete</button>
-    <a href="{% url 'profil' user.id %}">Cancel</a>
+    <button type="submit" class="btn btn-primary btn-lg">Potvrdit smazání</button>
+    <a href="{% url 'profil' user.id %}" class="btn btn-danger btn-lg">Zrušit</a>
   </form>
+</div>
 {% endblock %}

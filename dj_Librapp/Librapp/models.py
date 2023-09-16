@@ -17,12 +17,13 @@ class UzivatelManager(BaseUserManager):
         user.is_admin = True
         user.save()
         return user
+
 class Uzivatel(AbstractBaseUser):
-    uzivatelske_jmeno = models.CharField(max_length=200)
+    uzivatelske_jmeno = models.CharField(max_length=200, verbose_name="Uživatelské jméno")
     email = models.EmailField(max_length=300, unique=True)
     is_admin = models.BooleanField(default=False)
-    jmeno = models.CharField(max_length=200)
-    prijmeni = models.CharField(max_length=200)
+    jmeno = models.CharField(max_length=200, verbose_name="Jméno")
+    prijmeni = models.CharField(max_length=200, verbose_name="Příjmení")
 
     class Meta:
         verbose_name = "uživatel"
@@ -53,13 +54,14 @@ class Zanr(models.Model):
 
 class Kniha(models.Model):
     nazev = models.CharField(max_length=200, verbose_name="Název")
+    podtitul = models.CharField(max_length=200, verbose_name="Podtitul", blank=True)
     autor = models.CharField(max_length=180, verbose_name="Autor")
     rok_vydani = models.CharField(max_length=180, verbose_name="Publikováno")
     jazyk = models.CharField(max_length=180, verbose_name="Jazyk")
     ISBN10 = models.CharField(max_length=180, blank=True)
     ISBN13 = models.CharField(max_length=180, blank=True)
-    zanr = models.ForeignKey(Zanr, on_delete=models.SET_NULL, null= True, verbose_name="Žánr")
+    zanr = models.ForeignKey(Zanr, on_delete=models.SET_NULL, null=True, verbose_name="Žánr")
     majitel = models.ForeignKey(Uzivatel, on_delete=models.CASCADE, verbose_name="Majitel")
 
     def __str__(self):
-        return f"Název: {self.nazev} | Autor: {self.autor} | Žánr: {self.zanr}"
+        return f"Název: {self.nazev} | Podtitul: {self.podtitul} | Autor: {self.autor} | Žánr: {self.zanr}"

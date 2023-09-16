@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block content %}
+
 {% load crispy_forms_tags %}
 <h1>User form</h1>
 <hr>
@@ -11,13 +11,33 @@
         <form method="post" action="">
             {% csrf_token %}
             <div class="container-fluid">
-                {{form|crispy}}
 
-                <button type="submit" class="btn btn-lg btn-primary btn-block" value="Login">Submit</button>
+
             </div>
         </form>
     </section>
 </div>
 
 <div class="col-md-4"></div>
+
+{% block content %}
+<form method="post" class="text-center border border-light p-5" action="" >
+    {% csrf_token %}
+
+    <p class="h4 mb-4">Login</p>
+    {{ form|crispy}}
+    <!-- Email -->
+
+    <!-- Sign in button -->
+    <button type="submit" class="btn btn-lg btn-secondary btn-block" value="Login">Login</button>
+
+
+    <!-- Register -->
+    <p>Nejsi členem?
+        <a href="{% url 'registrace' %}">Zaregistruj se</a>
+    </p>
+
+
+</form>
 {% endblock %}
+<!-- Default form login -->

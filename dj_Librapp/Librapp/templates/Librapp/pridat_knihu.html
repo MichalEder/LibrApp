@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+<div class="container m-auto">
     <form action="" method="POST">
         {% csrf_token %}
         {{ form|crispy }}
-        <input type="submit" class="button-search" name="action" value="Vyhledej knihu">
+        <input type="submit" class="btn btn-primary btn-lg" name="action" value="Vyhledej knihu"></input>
     </form>
+</div>
+<div class="container m-auto mh-200">
     <form action="" method="POST">
         {% csrf_token %}
         {{ book_form|crispy }}
-        <input type="submit" name="action" value="Ulož knihu">
+        <input type="submit" name="action" value="Ulož knihu" class="btn btn-primary btn-lg" value="Ulož knihu"></input>
     </form>
+</div>
 {% endblock %}
