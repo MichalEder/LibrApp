@@ -1,15 +1,17 @@
+#Django importy
 from django.shortcuts import render, HttpResponse, redirect
 from django.views import generic
 from django.urls import reverse_lazy
-from .models import Kniha, Uzivatel
 from django.db.models import Q
-from .forms import KnihaForm, VyhledavaniISBNForm, RegistraceForm, LoginForm
-import requests
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+#Lokální importy
+from .models import Kniha, Uzivatel
+from .forms import KnihaForm, VyhledavaniISBNForm, RegistraceForm, LoginForm
 
-# Create your views here.
+#Importy třetích stran
+import requests
 
 
 class UpraveniKnihy(generic.UpdateView):
@@ -36,7 +38,6 @@ class UpraveniKnihy(generic.UpdateView):
             str: URL pro přesměrování na detail knihy po aktualizaci.
         """
         return reverse_lazy('detail', kwargs={'pk': self.object.id})
-
 
 
 class UpraveniUzivatele(generic.UpdateView):
@@ -168,7 +169,7 @@ class VyhledavaniISBN:
         isbn (str): ISBN knihy, podle které je vyhledáváno.
     """
     def __init__(self, isbn: str):
-        self.api_key = 'AIzaSyC93CTzl4KyuzwzGomQ2kipnPcj-0ZuubU' #TODO: skryt apikey
+        self.api_key = 'AIzaSyC93CTzl4KyuzwzGomQ2kipnPcj-0ZuubU'   # TODO: skryt apikey
         self.isbn = isbn
 
     def get_book_data(self):

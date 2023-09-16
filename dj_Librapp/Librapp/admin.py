@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import Kniha, Zanr, Uzivatel, UzivatelManager
 from django import forms
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+
+from .models import Kniha, Zanr, Uzivatel, UzivatelManager
 # Register your models here.
+
 
 class UzivatelCreationForm(forms.ModelForm):
     password = forms.CharField(label="Heslo", widget=forms.PasswordInput)
@@ -26,17 +28,18 @@ class UzivatelChangeForm(forms.ModelForm):
 
     class Meta:
         model = Uzivatel
-        fields = ['email', 'is_admin','jmeno', 'prijmeni', 'uzivatelske_jmeno' ]
+        fields = ['email', 'is_admin', 'jmeno', 'prijmeni', 'uzivatelske_jmeno']
 
     def __init__(self, *args, **kwargs):
         super(UzivatelChangeForm, self).__init__(*args, **kwargs)
         self.Meta.fields.remove('password')
 
+
 class UzivatelAdmin(UserAdmin):
     form = UzivatelChangeForm
     add_form = UzivatelCreationForm
 
-    list_display = ['email', 'is_admin','jmeno', 'prijmeni', 'uzivatelske_jmeno']
+    list_display = ['email', 'is_admin', 'jmeno', 'prijmeni', 'uzivatelske_jmeno']
     list_filter = ['is_admin']
     fieldsets = (
         (None, {'fields': ['email', 'password', 'jmeno', 'prijmeni', 'uzivatelske_jmeno']}),
@@ -45,7 +48,8 @@ class UzivatelAdmin(UserAdmin):
 
     add_fieldsets = (
         (None, {
-            'fields': ['email', 'password']}
+            'fields': ['email', 'password']
+        }
         ),
     )
     search_fields = ['email']
