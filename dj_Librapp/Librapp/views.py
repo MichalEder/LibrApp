@@ -2,17 +2,28 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.views import generic
 from django.urls import reverse_lazy
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 
 #Lokální importy
-from .models import Kniha, Uzivatel
+from .models import Kniha, Uzivatel, Zanr
 from .forms import KnihaForm, VyhledavaniISBNForm, RegistraceForm, LoginForm
 
 #Importy třetích stran
 import requests
 
+
+class PocitadloZanry(APIView):
+    def get(self, request):
+        pocet_knih_zanr = Zanr.objects.annotate(pocet_knih=Count('kniha'))
+
+        data = [{'nazev zanru': zanr.nazev_zanru, 'pocet': zanr.pocet_knih} for zanr in pocet_knih_zanr]
+
+        return Response({'zanry': data})
 
 class UpraveniKnihy(generic.UpdateView):
     """

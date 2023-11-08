@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'Librapp',
+    'rest_framework',
     'crispy_forms',
     'crispy_bootstrap5',
     'django.contrib.admin',

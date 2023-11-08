@@ -14,4 +14,5 @@ urlpatterns = [
     path('<int:pk>/odstran_uzivatele/', views.OdstraneniUzivatele.as_view(), name='odstran_uzivatele'),  # Odstranit uživatele
     path('<int:pk>/profil/', views.DetailUzivatele.as_view(), name='profil'),  # Detail uživatele
     path('<int:pk>/uprav_profil/', views.UpraveniUzivatele.as_view(), name='uprav_profil'),  # Úprava profilu uživatele
+    path('api/pocitadlo_zanry/', views.PocitadloZanry.as_view(), name='pocitadlo'), #
 ]
